@@ -38,9 +38,10 @@ public class ProductoController {
 	public int eliminar(Integer id) throws SQLException {
 		Connection con = new ConnectionFactory().recuperaConexion();
 		
-		Statement statement = con.createStatement();
+		PreparedStatement statement = con.prepareStatement("DELETE FROM PRODUCTO WHERE ID = ?");
+		statement.setInt(1, id);
 		
-		statement.execute("DELETE FROM PRODUCTO WHERE ID ="+id);
+		statement.execute();
 		
 		return statement.getUpdateCount();
 	}
