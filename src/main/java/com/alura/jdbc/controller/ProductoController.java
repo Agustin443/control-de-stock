@@ -20,14 +20,17 @@ public class ProductoController {
 		
 		Connection con = new ConnectionFactory().recuperaConexion();
 		
-		Statement statement = con.createStatement();
+		PreparedStatement statement = con.prepareStatement("UPDATE PRODUCTO SET "
+				+ " NOMBRE = ?"
+	            + ", DESCRIPCION = ?"
+	            + ", CANTIDAD = ? "
+	            + " WHERE ID = ? ");
 		
-		statement.execute("UPDATE PRODUCTO SET "
-	            + " NOMBRE = '" + nombre + "'"
-	            + ", DESCRIPCION = '" + descripcion + "'"
-	            + ", CANTIDAD = " + cantidad
-	            + " WHERE ID = " + id);
-
+		statement.setString(1, nombre);
+		statement.setString(2, descripcion);
+		statement.setInt(3, cantidad);
+		statement.setInt(4, id);
+		
 	    int updateCount = statement.getUpdateCount();
 
 	    con.close();   
