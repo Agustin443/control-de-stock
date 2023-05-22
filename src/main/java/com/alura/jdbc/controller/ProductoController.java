@@ -1,6 +1,7 @@
 package com.alura.jdbc.controller;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -73,12 +74,14 @@ public class ProductoController {
     public void guardar(Map<String, String> producto) throws SQLException {
     	Connection con = new ConnectionFactory().recuperaConexion();
 		
-    	Statement statement = con.createStatement();
+    	PreparedStatement statement = con.prepareStatement("INSERT INTO PRODUCTO(nombre, descripcion, cantidad)"
+    			+"VALUES(?, ? , ?)", Statement.RETURN_GENERATED_KEYS);
+   
+    	statement.setString(1, producto.get("NOMBRE"));
+    	statement.setString(2, producto.get("DESCRIPCION"));
+    	statement.setInt(3, Integer.valueOf(producto.get("CANTIDAD")));
     	
-    	statement.execute("INSERT INTO PRODUCTO(nombre, descripcion, cantidad)"+"VALUES('"
-    			+producto.get("NOMBRE")+"','"
-    			+producto.get("DESCRIPCION")+"',"
-    			+producto.get("CANTIDAD")+")", Statement.RETURN_GENERATED_KEYS);
+    	statement.execute();
     	
     	ResultSet resultSet = statement.getGeneratedKeys();
     	
