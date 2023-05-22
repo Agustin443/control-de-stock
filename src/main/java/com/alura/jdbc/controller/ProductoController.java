@@ -76,14 +76,33 @@ public class ProductoController {
 	}
 
     public void guardar(Map<String, String> producto) throws SQLException {
+    	String nombre = producto.get("NOMBRE");
+    	String descripcion = producto.get("DESCRIPCION");
+    	Integer cantidad = Integer.valueOf(producto.get("CANTIDAD"));
+    	Integer maximaCantidad = 50;
+    	
+    	
     	Connection con = new ConnectionFactory().recuperaConexion();
 		
     	PreparedStatement statement = con.prepareStatement("INSERT INTO PRODUCTO(nombre, descripcion, cantidad)"
     			+"VALUES(?, ? , ?)", Statement.RETURN_GENERATED_KEYS);
-   
-    	statement.setString(1, producto.get("NOMBRE"));
-    	statement.setString(2, producto.get("DESCRIPCION"));
-    	statement.setInt(3, Integer.valueOf(producto.get("CANTIDAD")));
+    	
+    	do {
+    		int cantidadParaGuardar = Math.min(cantidad, maximaCantidad);
+    		ejecutaRegistro(nombre, descripcion, cantidadParaGuardar, statement);
+    		cantidad -= maximaCantidad;
+    	}
+    	while(cantidad > 0);
+		
+		
+		con.close();
+	}
+
+	private void ejecutaRegistro(String nombre, String descripcion, Integer cantidad, PreparedStatement statement)
+			throws SQLException {
+		statement.setString(1, nombre);
+		statement.setString(2, descripcion);
+		statement.setInt(3, cantidad);
     	
     	statement.execute();
     	
