@@ -48,9 +48,9 @@ public class ProductoController {
 	public List<Map<String, String>> listar() throws SQLException {
 		Connection con = new ConnectionFactory().recuperaConexion();
 		
-		Statement statement = con.createStatement();
+		PreparedStatement statement = con.prepareStatement("SELECT ID, NOMBRE, DESCRIPCION, CANTIDAD FROM PRODUCTO");
 		
-		statement.execute("SELECT ID, NOMBRE, DESCRIPCION, CANTIDAD FROM PRODUCTO");
+		statement.execute();
 		
 		ResultSet resultSet = statement.getResultSet();
 		
