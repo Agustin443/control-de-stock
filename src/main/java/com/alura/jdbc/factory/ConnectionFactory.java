@@ -12,12 +12,14 @@ public class ConnectionFactory {
 	private DataSource datasource;
 	
 	public ConnectionFactory() {
-		var pooledDataSouce = new ComboPooledDataSource();
-		pooledDataSouce.setJdbcUrl("jdbc:mysql://localhost/control_de_stock?useTimeZone=true&serverTimeZone=UTC");
-		pooledDataSouce.setUser("root");
-		pooledDataSouce.setPassword("Nomeacuerdo1");
+		var pooledDataSource = new ComboPooledDataSource();
+		pooledDataSource.setJdbcUrl("jdbc:mysql://localhost/control_de_stock?useTimeZone=true&serverTimeZone=UTC");
+		pooledDataSource.setUser("root");
+		pooledDataSource.setPassword("Nomeacuerdo1");
 		
-		this.datasource = pooledDataSouce;
+		pooledDataSource.setMaxPoolSize(10);
+		
+		this.datasource = pooledDataSource;
 	}
 	
 	public Connection recuperaConexion() throws SQLException{
