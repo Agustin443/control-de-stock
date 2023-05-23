@@ -11,6 +11,7 @@ public class PruebaPoolDeConexiones {
 		ConnectionFactory connectionFactory = new ConnectionFactory();
 		
 		for(int i = 0; i<20; i++) {
+			
 			Connection conexion = connectionFactory.recuperaConexion();
 			
 			System.out.println("Abriendo la conexion de numero "+(i + 1));

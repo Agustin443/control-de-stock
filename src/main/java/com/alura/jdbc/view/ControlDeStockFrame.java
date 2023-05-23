@@ -20,6 +20,7 @@ import javax.swing.table.DefaultTableModel;
 
 import com.alura.jdbc.controller.CategoriaController;
 import com.alura.jdbc.controller.ProductoController;
+import com.alura.jdbc.modelo.Producto;
 
 public class ControlDeStockFrame extends JFrame {
 
@@ -229,21 +230,18 @@ public class ControlDeStockFrame extends JFrame {
 
     private void cargarTabla() {
     	
-    	try {
     		var productos = this.productoController.listar();
-    		try {
+    		
                
-                productos.forEach(producto -> modelo.addRow(new Object[] { producto.get("ID"), producto.get("NOMBRE"), producto.get("DESCRIPCION"), producto.get("CANTIDAD")}));
-                
-            } catch (Exception e) {
-                throw e;
-            }
-    	} catch (SQLException e) {
-    		
-    		
-    		throw new RuntimeException(e);
-    	}
-        
+                productos.forEach(producto -> modelo.addRow(
+                		new Object[] { 
+                				producto.getId(),
+                				producto.getNombre(),
+                				producto.getDescripcion(),
+                				producto.getCantidad()
+                				}
+                		)
+                	);
     }
 
     private void guardar() {
@@ -263,20 +261,12 @@ public class ControlDeStockFrame extends JFrame {
         }
 
         // TODO
-        var producto = new HashMap<String,String>();
-        
-        producto.put("NOMBRE", textoNombre.getText()); 
-        producto.put("DESCRIPCION", textoDescripcion.getText());
-        producto.put("CANTIDAD", String.valueOf(cantidadInt));
+        var producto = new Producto(textoNombre.getText(),textoDescripcion.getText(),cantidadInt);
         
         var categoria = comboCategoria.getSelectedItem();
 
-        try {
-			this.productoController.guardar(producto);
-		} catch (SQLException e) {
-			throw new RuntimeException(e);
-		}
-
+        this.productoController.guardar(producto);
+        
         JOptionPane.showMessageDialog(this, "Registrado con éxito!");
 
         this.limpiarFormulario();
