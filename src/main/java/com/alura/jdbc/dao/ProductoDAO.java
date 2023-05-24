@@ -22,13 +22,11 @@ public class ProductoDAO {
 	public void guardar(Producto producto) {
 		
     	try(con){
-	    	final PreparedStatement statement = con.prepareStatement("INSERT INTO PRODUCTO(nombre, descripcion, cantidad)"
-	    			+"VALUES(?, ? , ?)", Statement.RETURN_GENERATED_KEYS);
+	    	final PreparedStatement statement = con.prepareStatement("INSERT INTO PRODUCTO(nombre, descripcion, cantidad, categoria_id)"
+	    			+"VALUES(?, ? , ?, ?)", Statement.RETURN_GENERATED_KEYS);
 	    	try(statement){
 	 
 			    	ejecutaRegistro(producto, statement);
-			    	
-			    	con.commit();
 			    	
 		    	} 
 		    	
@@ -42,6 +40,7 @@ public class ProductoDAO {
 		statement.setString(1, producto.getNombre());
 		statement.setString(2, producto.getDescripcion());
 		statement.setInt(3, producto.getCantidad());
+		statement.setInt(4, producto.getCategoriaId());
 	
     	statement.execute();
     	
@@ -134,6 +133,50 @@ public class ProductoDAO {
 	    } catch (SQLException e) {
 	        throw new RuntimeException(e);
 	    }
+	}
+
+	public List<Producto> listar(Integer categoriaId) {
+		List<Producto> resultado = new ArrayList<>();
+		
+		final Connection con = new ConnectionFactory().recuperaConexion();
+		
+		try(con){
+			
+			var querySelect = "SELECT ID, NOMBRE, DESCRIPCION, CANTIDAD"
+					+" FROM PRODUCTO"
+					+" WHERE CATEGORIA_ID = ?";
+			
+			System.out.println(querySelect);
+			
+			final PreparedStatement statement = con.prepareStatement(querySelect);
+			
+			try(statement){
+				
+				statement.setInt(1, categoriaId);
+				statement.execute();
+				
+				final ResultSet resultSet = statement.getResultSet();
+				
+				try(resultSet){
+					while (resultSet.next()) {
+						Producto fila = new Producto(
+								resultSet.getInt("ID"), 
+								resultSet.getString("NOMBRE"),
+								resultSet.getString("DESCRIPCION"),
+								resultSet.getInt("CANTIDAD"));
+						
+						resultado.add(fila);
+					}
+					
+				}
+				
+				
+				return resultado;
+			}	
+	
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 }
